@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, ZSAlertViewShowStyle)
   cancelButtonTitle:(NSString *)cancelButtonTitle
   otherButtonTitles:(NSString *)otherButtonTitles, ...;
 
+- (void)addButtonWithTitle:(NSString *)title;
+
 - (void)setTextFieldsCount:(NSInteger)count;
 
 - (void)show;

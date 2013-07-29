@@ -8,9 +8,9 @@
 
 #import "ZSAlertView.h"
 
-#define applicationFrameWidth [[UIScreen mainScreen] applicationFrame].size.width
-#define applicationFrameHeight [[UIScreen mainScreen] applicationFrame].size.height
-#define MAX_VIEW_HEIGHT (applicationFrameHeight * 0.9)
+#define screenWidth [[UIScreen mainScreen] bounds].size.width
+#define screenHeight [[UIScreen mainScreen] bounds].size.height
+#define MAX_VIEW_HEIGHT (screenHeight * 0.85)
 #define MIN_VIEW_HEIGHT (TOP_INSETS + BOTTOM_INSETS + BUTTON_HEIGHT)
 
 const static int DIALOGVIEW_WIDTH = 280;
@@ -90,7 +90,7 @@ const static int EDGE_INSETS = 5;
   cancelButtonTitle:(NSString *)cancelButtonTitle
   otherButtonTitles:(NSString *)otherButtonTitles, ...
 {
-    self = [self initWithFrame:CGRectMake(0, 0, applicationFrameWidth, applicationFrameHeight)];
+    self = [self initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     if (self) {
         _title = title;
         _message = message;
@@ -186,17 +186,17 @@ const static int EDGE_INSETS = 5;
         dialog_height += VIEW_INTERVAL_V;
     }
     
-    dialog_x = (applicationFrameWidth - DIALOGVIEW_WIDTH) / 2;
+    dialog_x = (screenWidth - DIALOGVIEW_WIDTH) / 2;
     if (_alertViewStyle == ZSAlertViewStyleDefault) {
         if (dialog_height > MAX_VIEW_HEIGHT) {
             dialog_height = MAX_VIEW_HEIGHT;
         }
-        dialog_y = (applicationFrameHeight - dialog_height) / 2;
+        dialog_y = (screenHeight - dialog_height) / 2 + 20;
     } else {
         if (dialog_height > MAX_VIEW_HEIGHT / 2) {
             dialog_height = MAX_VIEW_HEIGHT / 2;
         }
-        dialog_y = (applicationFrameHeight / 2 - dialog_height) / 2;
+        dialog_y = (screenHeight / 2 - dialog_height) / 2 + 20;
     }
 }
 
@@ -305,6 +305,31 @@ const static int EDGE_INSETS = 5;
     [_titleLabel setText:_title];
 }
 
+- (void)addButtonWithTitle:(NSString *)title
+{
+    UIEdgeInsets imageInsets = UIEdgeInsetsMake(25, 25, 25, 25);
+    
+    int tag = [_buttonArray count];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    if (tag == 0) {
+        [button setBackgroundImage:[[UIImage imageNamed:@"cancel_button01.png"] resizableImageWithCapInsets:imageInsets]
+                          forState:UIControlStateNormal];
+        [button setBackgroundImage:[[UIImage imageNamed:@"cancel_button02.png"] resizableImageWithCapInsets:imageInsets]
+                          forState:UIControlStateHighlighted];
+    } else {
+        [button setBackgroundImage:[[UIImage imageNamed:@"normal_button01.png"] resizableImageWithCapInsets:imageInsets]
+                          forState:UIControlStateNormal];
+        [button setBackgroundImage:[[UIImage imageNamed:@"normal_button02.png"] resizableImageWithCapInsets:imageInsets]
+                          forState:UIControlStateHighlighted];
+    }
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTag:tag];
+    [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_buttonArray addObject:button];
+    [_dialogView addSubview:button];
+}
+
 - (void)setTextFieldsCount:(NSInteger)count
 {
     if (_alertViewStyle != ZSAlertViewStylePlainTextInput) {
@@ -327,8 +352,7 @@ const static int EDGE_INSETS = 5;
     [self getDialogHeight];
     [self initDialogLayout];
     
-    UIViewController *viewController = (UIViewController *)self.delegate;
-    [viewController.view addSubview:self];
+    [[[UIApplication sharedApplication] keyWindow] addSubview:self];
     
     if (_alertViewShowStyle == ZSAlertViewShowStyleDefault) {
         [self setAlpha:0];
@@ -341,8 +365,8 @@ const static int EDGE_INSETS = 5;
     if (_alertViewShowStyle == ZSAlertViewShowStyleFlyIn) {
         [self setAlpha:1];
         
-        CGFloat distance = applicationFrameWidth;
-        CGPoint dialogCenter = CGPointMake(applicationFrameWidth * 1.5f, _dialogView.center.y);
+        CGFloat distance = screenWidth;
+        CGPoint dialogCenter = CGPointMake(screenWidth * 1.5f, _dialogView.center.y);
         [_dialogView setCenter:dialogCenter];
         dialogCenter.x -= distance;
         [UIView animateWithDuration:0.2f
@@ -363,7 +387,7 @@ const static int EDGE_INSETS = 5;
                          }];
     }
     if (_alertViewShowStyle == ZSAlertViewShowStyleFlyIn) {
-        CGFloat distance = applicationFrameWidth;
+        CGFloat distance = screenWidth;
         CGPoint dialogCenter = _dialogView.center;
         dialogCenter.x -= distance;
         [UIView animateWithDuration:0.2f

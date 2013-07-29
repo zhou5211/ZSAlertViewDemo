@@ -28,7 +28,8 @@
     int height = 40;
     
     NSArray *titles = [[NSArray alloc] initWithObjects:
-                       @"Normal",
+                       @"Normal with single button",
+                       @"Normal with double button",
                        @"Plain text input",
                        @"Login and password input",
                        @"Show style default",
@@ -50,7 +51,7 @@
                                            message:@"message"
                                           delegate:self
                                  cancelButtonTitle:@"cancel"
-                                 otherButtonTitles:@"confirm", nil];
+                                 otherButtonTitles:nil];
 }
 
 - (void)buttonClicked:(id)sender
@@ -64,24 +65,34 @@
             break;
         case 1:
         {
+            ZSAlertView *alertView2 = [[ZSAlertView alloc] initWithTitle:@"Title"
+                                                                 message:@"message"
+                                                                delegate:self
+                                                       cancelButtonTitle:@"cancel"
+                                                       otherButtonTitles:@"confirm", nil];
+            [alertView2 show];
+        }
+            break;
+        case 2:
+        {
             alertView.alertViewStyle = ZSAlertViewStylePlainTextInput;
             [alertView setTextFieldsCount:1];
             [alertView show];
         }
             break;
-        case 2:
+        case 3:
         {
             alertView.alertViewStyle = ZSAlertViewStyleLoginAndPasswordInput;
             [alertView show];
         }
             break;
-        case 3:
+        case 4:
         {
             alertView.alertViewShowStyle = ZSAlertViewShowStyleDefault;
             [alertView show];
         }
             break;
-        case 4:
+        case 5:
         {
             alertView.alertViewShowStyle = ZSAlertViewShowStyleFlyIn;
             [alertView show];
